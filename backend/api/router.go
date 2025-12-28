@@ -11,8 +11,13 @@ import (
 func router() http.Handler {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/signup", controller.Instance().SignUpHandler).Methods("POST")
-	r.HandleFunc("/login", controller.Instance().LoginHandler).Methods("POST")
+	r.Use(mux.CORSMethodMiddleware(r))
+
+	userPath := r.PathPrefix("/api/v1/user").Subrouter()
+
+	userPath.HandleFunc("/signup", controller.Instance().SignUpHandler).Methods("POST")
+	userPath.HandleFunc("/login", controller.Instance().LoginHandler).Methods("POST")
+
 	r.HandleFunc("/health", handlePing).Methods("GET")
 	r.HandleFunc("/auth/google/login", controller.Instance().GoogleLogin).Methods("GET")
 	r.HandleFunc("/auth/google/callback", controller.Instance().GoogleAuthCallback)

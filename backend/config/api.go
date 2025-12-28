@@ -12,6 +12,6 @@ type Api struct {
 	port       int
 }
 
-func (api *Api) Addr() string {
-	return fmt.Sprintf("%s:%d", api.host, api.port)
+func (c *Config) Addr() string {
+	return fmt.Sprintf("%s:%d", c.Api.host, c.Api.port)
 }
