@@ -59,15 +59,15 @@ func NewConfig() *Config {
 		},
 		Jwt_secret: envReadString(envConfigJWTsecret, ""),
 		Cloudinary: &CloudinaryEnv{
-			envConfigCloudinaryName:      envReadString(envConfigCloudinaryName, "sanjog-personal"),
-			envConfigApiKey:              envReadString(envConfigApiKey, "439893631999215"),
-			envConfigApiSecret:           envReadString(envConfigApiSecret, "CJwEHvIWSUaoB8NMaF0yQr249ME"),
-			envConfigApiCloudinaryFolder: envReadString(envConfigApiCloudinaryFolder, "test-image"),
+			envConfigCloudinaryName:      envReadString(envConfigCloudinaryName, ""),
+			envConfigApiKey:              envReadString(envConfigApiKey, ""),
+			envConfigApiSecret:           envReadString(envConfigApiSecret, ""),
+			envConfigApiCloudinaryFolder: envReadString(envConfigApiCloudinaryFolder, ""),
 			secure:                       true,
 		},
 		Google_Handler: &GoogleHandler{
-			ClientId:     envReadString(envConfigGoogleClientId, "506172879779-ro3m8fqo9ree94ajvc0iaenb950329f2.apps.googleusercontent.com"),
-			ClientSecret: envReadString(envConfigGoogleClientSecret, "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"),
+			ClientId:     envReadString(envConfigGoogleClientId, ""),
+			ClientSecret: envReadString(envConfigGoogleClientSecret, ""),
 		},
 	}
 
