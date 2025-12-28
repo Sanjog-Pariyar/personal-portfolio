@@ -15,10 +15,11 @@ func main() {
 
 	newPg := postgres.NewPostgres(newConfig)
 
+	controller.SetController(newPg, newConfig)
+	
 	server := api.Instance()
 	server.Start(newConfig.Addr())
 
-	controller.SetController(newPg, newConfig)
 
 	log.Println("Server exiting")
 }

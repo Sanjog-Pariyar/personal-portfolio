@@ -10,9 +10,6 @@ import (
 )
 
 type Postgres interface {
-	CreateUser(user models.User) (*models.User, error)
-	GetUserByEmail(email string) (*models.User)
-	GetUserById(id string) (*models.User, error)
 	Signup(user models.User) (*models.User, error)
 	Login(user models.User) (*models.User, error)
 }

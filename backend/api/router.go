@@ -11,8 +11,6 @@ import (
 func router() http.Handler {
 	r := mux.NewRouter()
 
-	r.Use(mux.CORSMethodMiddleware(r))
-
 	userPath := r.PathPrefix("/api/v1/user").Subrouter()
 
 	userPath.HandleFunc("/signup", controller.Instance().SignUpHandler).Methods("POST")
@@ -27,6 +25,5 @@ func router() http.Handler {
 }
 
 func handlePing(w http.ResponseWriter, r *http.Request) {
-	
 	utils.RespondWithJSON(w, http.StatusOK, map[string]string{"status": "ok"})
 }
