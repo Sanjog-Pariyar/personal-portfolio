@@ -1,6 +1,11 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+
+	"github.com/cloudinary/cloudinary-go/v2"
+)
 
 const (
 	envConfigCloudinaryName      = "CLOUDINARY_CLOUD_NAME"
@@ -15,13 +20,27 @@ type CloudinaryEnv struct {
 	envConfigApiSecret           string
 	envConfigApiCloudinaryFolder string
 	secure                       bool
+	cld                          *cloudinary.Cloudinary
 }
 
-func (c *CloudinaryEnv) CloudinaryUrl() string {
+func cloudinaryUrl(c *Config) string {
 	return fmt.Sprintf(
 		"cloudinary://%v:%v@%v",
-		c.envConfigApiKey,
-		c.envConfigApiSecret,
-		c.envConfigCloudinaryName,
+		c.Cloudinary.envConfigApiKey,
+		c.Cloudinary.envConfigApiSecret,
+		c.Cloudinary.envConfigCloudinaryName,
 	)
+}
+
+func (c *Config) NewCloudinary() *cloudinary.Cloudinary {
+	cld, err := cloudinary.NewFromURL(cloudinaryUrl(c))
+	if err != nil {
+		log.Fatalf("Could not connect to cloudinary: %v", err)
+	}
+
+	cloudinary := &CloudinaryEnv{
+		cld: cld,
+	}
+
+	return cloudinary.cld
 }

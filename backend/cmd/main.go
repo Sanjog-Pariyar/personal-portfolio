@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/sanjog-pariyar/user-service/api"
-	"github.com/sanjog-pariyar/user-service/cloudinary"
 	"github.com/sanjog-pariyar/user-service/config"
 	"github.com/sanjog-pariyar/user-service/controller"
 	"github.com/sanjog-pariyar/user-service/internal"
@@ -13,10 +12,12 @@ import (
 
 func main() {
 	newConfig := config.NewConfig()
-	newPg := postgres.NewPostgres(newConfig.Postgres)
-	newCloudinary := cloudinary.NewCloudinary(newConfig.Cloudinary.CloudinaryUrl())
+
+	newPg := postgres.NewPostgres(newConfig)
+
 	newServer := api.NewServer(newConfig.Api)
-	controller.SetController(newPg, newConfig.Jwt_secret, newCloudinary, newConfig.Google_Handler.GoogleOauthConfig())
+
+	controller.SetController(newPg, newConfig)
 
 	internal.Waiting(newServer)
 

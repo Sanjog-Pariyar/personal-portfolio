@@ -15,10 +15,10 @@ type GoogleHandler struct {
 	ClientSecret string
 }
 
-func (g *GoogleHandler) GoogleOauthConfig() *oauth2.Config {
+func (c *Config) GoogleOauthConfig() *oauth2.Config {
 	return &oauth2.Config{
-		ClientID:     g.ClientId,
-		ClientSecret: g.ClientSecret,
+		ClientID:     c.Google_Handler.ClientId,
+		ClientSecret: c.Google_Handler.ClientSecret,
 		RedirectURL:  "http://localhost:8000/auth/google/callback",
 		Scopes: []string{
 			"openid",

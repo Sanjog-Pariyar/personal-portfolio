@@ -1,9 +1,9 @@
 package config
 
 import (
+	"log"
 	"os"
 	"strconv"
-	"log"
 
 	"github.com/joho/godotenv"
 )
@@ -42,12 +42,10 @@ func NewConfig() *Config {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	apiPort := envReadNumeric(envConfigApiPort, 0)
-
 	config := &Config{
 		Api: &Api{
 			host: envReadString(envConfigApiHost, ""),
-			port: apiPort,
+			port: envReadNumeric(envConfigApiPort, 0),
 		},
 		Postgres: &Postgres{
 			host:     envReadString(envConfigPostgresHost, ""),
@@ -73,4 +71,8 @@ func NewConfig() *Config {
 
 	return config
 
+}
+
+func (c *Config) JwtSecret() string {
+	return c.Jwt_secret
 }

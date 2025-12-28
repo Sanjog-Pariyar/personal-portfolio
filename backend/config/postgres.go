@@ -1,6 +1,13 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+
+	"github.com/sanjog-pariyar/user-service/models"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
 
 const (
 	// defaultConfigPostgresPort = 5433
@@ -20,16 +27,37 @@ type Postgres struct {
 	user     string
 	dbName   string
 	sslmode  string
+	db       *gorm.DB
 }
 
-func (pg *Postgres) PostgresDSN() string {
+func postgresDSN(c *Config) string {
 	return fmt.Sprintf(
 		"host=%v user=%v password=%v dbname=%v port=%d sslmode=%v",
-		pg.host,
-		pg.user,
-		pg.password,
-		pg.dbName,
-		pg.port,
-		pg.sslmode,
+		c.Postgres.host,
+		c.Postgres.user,
+		c.Postgres.password,
+		c.Postgres.dbName,
+		c.Postgres.port,
+		c.Postgres.sslmode,
 	)
+}
+
+func (c *Config) NewPostgres() *gorm.DB {
+	db, err := gorm.Open(postgres.Open(postgresDSN(c)), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Could not connect to db: %v", err)
+		return nil
+	}
+
+	pg := &Postgres{
+		db: db,
+	}
+
+	autoMigrate(db)
+	return pg.db
+}
+
+func autoMigrate(database *gorm.DB) {
+	database.AutoMigrate(&models.User{})
+	fmt.Println("Automigrate complete")
 }

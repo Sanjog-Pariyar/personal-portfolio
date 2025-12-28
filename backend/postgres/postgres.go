@@ -3,21 +3,15 @@ package postgres
 import (
 	"errors"
 	"fmt"
-	"log"
 
 	"github.com/gofrs/uuid"
 	"github.com/sanjog-pariyar/user-service/errorhandler"
 	"github.com/sanjog-pariyar/user-service/models"
-	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-type PostgresStore interface {
-	CreateUser(user models.User) (*models.User, error)
-	GetUserByEmail(email string) (*models.User)
-	GetUserById(id string) (*models.User, error)
-	Signup(user models.User) (*models.User, error)
-	Login(user models.User) (*models.User, error)
+type Config interface {
+	NewPostgres() *gorm.DB
 }
 
 type Postgres struct {
@@ -70,6 +64,11 @@ func (pg *Postgres) GetUserByEmail(email string) *models.User {
 }
 
 func (pg *Postgres) Signup(user models.User) (*models.User, error) {
+	err := checkUsernameAndPassword(user)
+
+	if err != nil {
+		return  nil, err
+	}
 
 	existedUser := pg.GetUserByEmail(user.Email)
 
@@ -82,31 +81,18 @@ func (pg *Postgres) Signup(user models.User) (*models.User, error) {
 	}
 
 	newUser, err := pg.CreateUser(user)
-
 	if err != nil {
 		return nil, err
 	}
-
 	newUser.Password = ""
-
 	return newUser, nil
 }
 
 func (pg *Postgres) Login(user models.User) (*models.User, error) {
-	if user.Email == "" {
-		return nil, &errorhandler.UserServiceError{
-			ErrorType:     errorhandler.Invalid,
-			ClientMessage: "email is required",
-			Err:           errors.New("email is required"),
-		}
-	}
+	err := checkUsernameAndPassword(user)
 
-	if user.Password == "" {
-		return nil, &errorhandler.UserServiceError{
-			ErrorType:     errorhandler.Invalid,
-			ClientMessage: "password is required",
-			Err:           errors.New("password is required"),
-		}
+	if err != nil {
+		return  nil, err
 	}
 
 	existedUser := pg.GetUserByEmail(user.Email)
@@ -131,21 +117,9 @@ func (pg *Postgres) Login(user models.User) (*models.User, error) {
 }
 
 func NewPostgres(config Config) *Postgres {
-	db, err := gorm.Open(postgres.Open(config.PostgresDSN()), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Could not connect to db: %v", err)
-		return nil
-	}
 
 	pg := &Postgres{
-		db: db,
+		db: config.NewPostgres(),
 	}
-
-	autoMigrate(db)
 	return pg
-}
-
-func autoMigrate(database *gorm.DB) {
-	database.AutoMigrate(&models.User{})
-	fmt.Println("Automigrate complete")
 }

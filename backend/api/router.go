@@ -11,12 +11,12 @@ import (
 func router() http.Handler {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/signup", controller.Instance().Signup).Methods("POST")
-	r.HandleFunc("/login", controller.Instance().Login).Methods("POST")
+	r.HandleFunc("/signup", controller.Instance().SignUpHandler).Methods("POST")
+	r.HandleFunc("/login", controller.Instance().LoginHandler).Methods("POST")
 	r.HandleFunc("/health", handlePing).Methods("GET")
 	r.HandleFunc("/auth/google/login", controller.Instance().GoogleLogin).Methods("GET")
 	r.HandleFunc("/auth/google/callback", controller.Instance().GoogleAuthCallback)
-	r.HandleFunc("/image-transform", controller.Instance().ImageTransform)
+	r.HandleFunc("/image-transform", controller.Instance().GetAssetInfo)
 
 	return r
 }
