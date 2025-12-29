@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sanjog-pariyar/user-service/controller"
 	"github.com/sanjog-pariyar/user-service/utils"
+	"github.com/gorilla/handlers"
 )
 
 func router() http.Handler {
@@ -21,7 +22,14 @@ func router() http.Handler {
 	r.HandleFunc("/auth/google/callback", controller.Instance().GoogleAuthCallback)
 	r.HandleFunc("/image-transform", controller.Instance().GetAssetInfo)
 
-	return r
+	cors := handlers.CORS(
+		handlers.AllowedOrigins([]string{"http://localhost:3000"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+		handlers.AllowCredentials(),
+	)
+
+	return cors(r)
 }
 
 func handlePing(w http.ResponseWriter, r *http.Request) {
